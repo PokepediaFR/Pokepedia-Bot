@@ -69,7 +69,7 @@ public class SpriteHandler {
         }
 
         for (int i = 1; i <= m_pokemon.getSleepCount(); i++) {
-            String localDirectory = "/sleep/" + ((i == 4) ? "onSnorlax" : i) + "/shiny/";
+            String localDirectory = "/sleep/" + i  + "/shiny/";
             File sprite = new File(PATH_TO_ARCHIVE + localDirectory + m_numDex + ".png");
             uploadSprite(sprite, "Sprite " + m_pokemon.getNumDex() + " Dodo " + i + " chromatique Sleep.png");
         }

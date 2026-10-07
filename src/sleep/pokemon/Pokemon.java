@@ -8,6 +8,7 @@ import sleep.bouffe.IngredientPoke;
 import utilitaire.*;
 import utilitaire.article.Page;
 import utilitaire.article.PageToPublish;
+import utilitaire.article.SideGamePage;
 
 import java.util.*;
 
@@ -97,8 +98,7 @@ public class Pokemon {
                 m_freqSec = Integer.parseInt(details[2]);
                 break;
             default: {
-                System.err.println("ERREUR : Format de fréquence invalide");
-                System.exit(1);
+                throw new IllegalArgumentException("Format de fréquence invalide");
             }
         }
     }
@@ -616,27 +616,26 @@ public class Pokemon {
     public String makePokemonPage() {
         StringBuilder result = new StringBuilder(5000);
         String type = m_type.getFrenchName();
-        {
-            Page pokePage = new Page(getRegionalName() + "/Jeux secondaires", POKEPEDIA);
-            if (pokePage.doesPageExists()) {
-                System.out.println("Warning: Page already exists, might not behave as expected");
-                result.append(pokePage.getContent()).append("\n");
-            } else {
-                result.append(getNavigationRibbon()).append("\n\n");
-            }
-        }
-
+        SideGamePage sidePage = getSideGamePage();
 
         Page basePage = new Page(getRegionalName(), POKEPEDIA);
 
         int berryAmount = (m_speciality == Specialites.BAIES || m_speciality == Specialites.TOUTES) ? 2 : 1;
 
-        result.append("== Pokémon Sleep ==\n{{Édité par robot}}\n[[Fichier:Sprite ").append(getImageID());
+        result.append("{{Édité par robot}}\n[[Fichier:Sprite ").append(getImageID());
 
         if (m_imageryType.equals(Imagery.SEXUAL_DIMORPHISM)) result.append(" ♂");
 
         result.append(" Sleep.png|200px|right|thumb|Sprite de ")
-            .append(getRegionalName()).append(" dans {{Jeu|Sleep}}.]]\n\n").append("""
+            .append(getRegionalName()).append(" dans {{Jeu|Sleep}}.]]\n").append("""
+                {{#invoke:Sommaire|table|
+                Ingrédients possibles
+                Évolution
+                Description du Dododex
+                Styles de dodo
+                }}
+                
+                """).append("""
                 '''%s''' est présent dans {{Jeu|Sleep}} depuis le %s via l'évènement [[{{?}}]]. Il possède %d styles de dodo et apparaît lors de sessions de recherche du type %s.
                 
                 En tant que Pokémon de soutien, %s arbore le type %s et possède la spécialité « %s ».
@@ -696,17 +695,9 @@ public class Pokemon {
                 
                 === Styles de dodo ===
                 
-                """.formatted(getEvolutionData(basePage), m_description)).append(getPokemonSleepData()).append("""
-                
-                [[Catégorie:Page de %s]]
-                [[Catégorie:Page de jeux secondaires]]
-                [[Catégorie:Pokémon apparaissant dans Pokémon Sleep]]""".formatted(getRegionalName()));
+                """.formatted(getEvolutionData(basePage), m_description)).append(getPokemonSleepData());
 
-        return result.toString();
-    }
-
-    protected String getNavigationRibbon() {
-        return Util.makeNavigationRibbon(Integer.parseInt(m_numDex));
+        return sidePage.addSection(SideGame.SLEEP, result.toString());
     }
 
     private int[] getMedalUnlocks() {
@@ -886,6 +877,8 @@ public class Pokemon {
                 :%s
                 """.formatted(m_description);
     }
+
+    protected SideGamePage getSideGamePage() {return new SideGamePage(PokeData.getPokemonFromName(m_name));}
 
     protected String getPokemonListName()
     {

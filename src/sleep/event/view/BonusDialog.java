@@ -12,6 +12,7 @@ package sleep.event.view;
 
 import sleep.bouffe.CookingType;
 import sleep.event.bonus.*;
+import sleep.pokemon.Specialites;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,6 +33,12 @@ public class BonusDialog {
 
         JCheckBox chbCS = new JCheckBox("Multiplicateur cuisine");
         JSpinner spnCS = new JSpinner(new SpinnerNumberModel(150,105,200,5));
+
+        JCheckBox chbI = new JCheckBox("Ingrédient supplémentaire");
+        JComboBox<Specialites> cmbI = new JComboBox<>(Specialites.values());
+
+        JCheckBox chbCE = new JCheckBox("Énergie après cuisine");
+        JSpinner spnCE = new JSpinner(new SpinnerNumberModel(5,1,20,1));
 
         JCheckBox chbEXP = new JCheckBox("Multiplicateur EXP");
         JSpinner spnEXP = new JSpinner(new SpinnerNumberModel(150,125,300,25));
@@ -62,6 +69,10 @@ public class BonusDialog {
         mainPanel.add(cmbCT);
         mainPanel.add(chbCS);
         mainPanel.add(spnCS);
+        mainPanel.add(chbI);
+        mainPanel.add(cmbI);
+        mainPanel.add(chbCE);
+        mainPanel.add(spnCE);
         mainPanel.add(chbSL);
         mainPanel.add(spnSL);
         mainPanel.add(chbST);
@@ -88,6 +99,8 @@ public class BonusDialog {
         if (result == JOptionPane.OK_OPTION) {
             if (chbCT.isSelected()) bonuses.add(new CookingTypeBonus((CookingType) cmbCT.getSelectedItem()));
             if (chbCS.isSelected()) bonuses.add(new CookingStrengthBonus((Integer) spnCS.getValue() - 100));
+            if (chbI.isSelected()) bonuses.add(new IngredientBonus((Specialites) cmbI.getSelectedItem()));
+            if (chbCE.isSelected()) bonuses.add(new CookingEnergyBonus((Integer) spnCE.getValue()));
             if (chbSL.isSelected()) bonuses.add(new SkillLevelBonus((Integer) spnSL.getValue()));
             if (chbST.isSelected()) bonuses.add(new SkillTrigerBonus((Integer) spnST.getValue() - 100));
             if (chbEXP.isSelected()) bonuses.add(new ExpBonus((Integer) spnEXP.getValue() - 100));

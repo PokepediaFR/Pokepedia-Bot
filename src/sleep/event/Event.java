@@ -263,9 +263,9 @@ public record Event(String name, Date startDate, int weekDuration, List<Bonus> b
         String newContent;
         int year = getYear();
 
-        String oldSection = Util.searchValueOf(content, "padding: 0\" | " + year, "\n|}", true);
+        String oldSection = Util.searchValueOf(content, "padding: 0\" | " + year, "\n</div>\n", true);
         if (oldSection != null) {
-            String newSection = oldSection + " • [[%s]]".formatted(name);
+            String newSection = oldSection + "\n<div>[[%s]]</div>".formatted(name);
             newContent = content.replace(oldSection, newSection);
         }
         else {

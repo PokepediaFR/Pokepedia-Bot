@@ -13,7 +13,7 @@ public class RandomStuff {
     static void main(String[] args) {
         Login.handleLogin(args);
 
-        addSpaces();
+        fixSideGames();
     }
 
     private static void makeSleepZones() {
@@ -110,5 +110,22 @@ public class RandomStuff {
         }
 
         Util.publishMultipleEdits(newPages);
+    }
+
+    private static void fixSideGames() {
+        ArrayList<PageToPublish> fixedPages = new ArrayList<>();
+
+        for (Pokemon pokemon : PokeData.getAllPokemon()) {
+            Page pokePage = new Page(pokemon.getFrenchName(), Wiki.POKEPEDIA);
+
+            String content = pokePage.getContent();
+            if (content.contains("}}== Apparitions dans les jeux secondaires ==")) {
+                fixedPages.add(new PageToPublish(pokePage, content.replace("}}== Apparitions dans les jeux secondaires ==", "}}\n\n== Apparitions dans les jeux secondaires =="), "Fix saut de ligne"));
+            }
+
+            if (pokemon.getNumDex() > 35) break;
+        }
+
+        Util.publishMultipleEdits(fixedPages);
     }
 }

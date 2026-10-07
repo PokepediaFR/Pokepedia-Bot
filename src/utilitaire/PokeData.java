@@ -44,13 +44,13 @@ public class PokeData {
      * @param num le numéro d'un Pokémon dans le Dex national
      * @return l'instance du Pokemon avec toutes ses infos
      */
-    public static Pokemon getPokemonFromNum(int num) {
+    public static Pokemon getPokemonFromNum(int num) throws IndexOutOfBoundsException {
         loadPokemon();
 
         if ( num > 0 && num <= pokemon.length ) {
             return pokemon[num-1];
         } else {
-            throw new IndexOutOfBoundsException("Invalid Pokemon Number");
+            throw new IndexOutOfBoundsException("Invalid Pokemon Number: " + num);
         }
     }
 

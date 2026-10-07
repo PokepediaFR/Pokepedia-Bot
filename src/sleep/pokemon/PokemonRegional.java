@@ -4,9 +4,11 @@ import sleep.bouffe.IngredientPoke;
 import sleep.dodos.SleepStyle;
 import sleep.zone.Island;
 import sleep.dodos.TypesDodo;
+import utilitaire.PokeData;
 import utilitaire.PokeTypes;
 import utilitaire.Region;
 import utilitaire.Util;
+import utilitaire.article.SideGamePage;
 
 import java.util.ArrayList;
 
@@ -36,7 +38,10 @@ public class PokemonRegional extends Pokemon{
         m_region = region;
     }
 
-
+    @Override
+    protected SideGamePage getSideGamePage() {
+        return new SideGamePage(PokeData.getPokemonFromName(getFullName()), m_region);
+    }
 
     @Override
     protected String getNameSection() {
@@ -56,10 +61,5 @@ public class PokemonRegional extends Pokemon{
     @Override
     protected String getImageID() {
         return super.getImageID() + " " + m_region.getFrName();
-    }
-
-    @Override
-    protected String getNavigationRibbon() {
-        return Util.makeNavigationRibbon(Integer.parseInt(m_numDex), m_region);
     }
 }

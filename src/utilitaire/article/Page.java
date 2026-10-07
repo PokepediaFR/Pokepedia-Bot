@@ -35,7 +35,7 @@ import java.util.Objects;
 public class Page {
 	private final String title;
 	private final Date touched;
-	private String content;
+	protected String content;
 	private final Wiki m_from;
 	
 	/**

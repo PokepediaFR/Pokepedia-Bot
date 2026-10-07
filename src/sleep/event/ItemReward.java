@@ -16,6 +16,10 @@ public record ItemReward(Item item, int quantity) {
         BONBON_TYPE_L("Bonbon de type ??? L", "Bonbon (Pokémon Sleep)#Bonbons spéciaux|Bonbon de type ??? L]] L", false),
         BONBON_POKEMON("Bonbon ???", "Bonbon (Pokémon Sleep)#Bonbon Pokémon|Bonbon ???]]", false),
 
+        TICKET_INGREDIENTS_S("Ticket Ingrédients S", "Ticket Ingrédients]] S", true),
+        TICKET_INGREDIENTS_M("Ticket Ingrédients M", "Ticket Ingrédients]] M", true),
+        TICKET_INGREDIENTS_L("Ticket Ingrédients L", "Ticket Ingrédients]] L", true),
+
         AMAS_DE_REVE_S("Amas de Rêve S", "Amas de Rêve]] S", true),
         AMAS_DE_REVE_M("Amas de Rêve M", "Amas de Rêve]] M", true),
         AMAS_DE_REVE_L("Amas de Rêve L", "Amas de Rêve]] L", true),

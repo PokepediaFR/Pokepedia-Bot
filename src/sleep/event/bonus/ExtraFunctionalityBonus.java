@@ -21,7 +21,7 @@ public record ExtraFunctionalityBonus(Functionality functionality) implements Bo
 
         public String getLink()
         {
-            return "[[%s|%S]]".formatted(link, name);
+            return "[[%s|%s]]".formatted(link, name);
         }
     }
 
