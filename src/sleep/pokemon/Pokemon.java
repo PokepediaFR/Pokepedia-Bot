@@ -786,7 +786,7 @@ public class Pokemon {
             }
         }
 
-        data.append("|}\n</div>\n");
+        data.append("|}\n</div>");
         return data.toString();
     }
 
