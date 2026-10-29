@@ -4,16 +4,18 @@ import sleep.zone.Island;
 import utilitaire.*;
 import utilitaire.article.Page;
 import utilitaire.article.PageToPublish;
+import utilitaire.article.SideGamePage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class RandomStuff {
 
     static void main(String[] args) {
         Login.handleLogin(args);
 
-        fixSideGames();
+        moveSummary();
     }
 
     private static void makeSleepZones() {
@@ -119,13 +121,106 @@ public class RandomStuff {
             Page pokePage = new Page(pokemon.getFrenchName(), Wiki.POKEPEDIA);
 
             String content = pokePage.getContent();
-            if (content.contains("}}== Apparitions dans les jeux secondaires ==")) {
-                fixedPages.add(new PageToPublish(pokePage, content.replace("}}== Apparitions dans les jeux secondaires ==", "}}\n\n== Apparitions dans les jeux secondaires =="), "Fix saut de ligne"));
+            String newContent = content.replaceFirst(".== Apparitions dans les jeux secondaires ==", "\n\n== Apparitions dans les jeux secondaires ==");
+            if (!content.equals(newContent)) {
+                fixedPages.add(new PageToPublish(pokePage, newContent, "Fix saut de ligne"));
+                System.out.println(pokePage.getTitle());
             }
 
-            if (pokemon.getNumDex() > 35) break;
+            for (Region region : pokemon.getRegionalForms()) {
+                Page rpokePage = new Page(pokemon.getFrenchName() + " " + region.getFrAdjective(), Wiki.POKEPEDIA);
+
+                String rcontent = rpokePage.getContent();
+                String rnewContent = rcontent.replaceFirst(".== Apparitions dans les jeux secondaires ==", "\n\n== Apparitions dans les jeux secondaires ==");
+                if (!rcontent.equals(rnewContent)) {
+                    fixedPages.add(new PageToPublish(rpokePage, rnewContent, "Fix saut de ligne"));
+                    System.out.println(rpokePage.getTitle());
+                }
+            }
         }
 
         Util.publishMultipleEdits(fixedPages);
+    }
+
+    private static void addSummary() {
+        ArrayList<PageToPublish> filledPages = new ArrayList<>();
+        for (Page page : API.getPageFromCategory("Pokémon apparaissant dans Pokémon Sleep", API.NS_MAIN, Wiki.POKEPEDIA)) {
+            String content = page.getContent();
+            String name = page.getTitle().substring(0, page.getTitle().indexOf("/"));
+            System.out.println("Handling " + name);
+
+            String newContent = content.replaceFirst("\n}}\n\n== ", """
+                   
+                    }}
+                   
+                    Cette page répertorie les apparitions de '''%s''' dans les [[jeux secondaires]].
+                   
+                    {{#invoke:Sommaire|triAlphabetique}}
+                   
+                    ==\s""".formatted(name)).replace("dans {{Jeu|Sleep}}.]]\n\n'''", """
+                    dans {{Jeu|Sleep}}.]]
+                    
+                    {{#invoke:Sommaire|table|
+                    Ingrédients possibles
+                    Évolution
+                    Description du Dododex
+                    Styles de dodo
+                    }}
+                    
+                    '''""");
+
+            filledPages.add(new PageToPublish(page, newContent, "Ajout de sommaire(s)", true));
+        }
+
+        Util.publishMultipleEdits(filledPages);
+    }
+
+    private static void fixPMD() {
+        ArrayList<PageToPublish> filledPages = new ArrayList<>();
+        for (Page page : API.getPageFromCategory("Page de jeux secondaires", API.NS_MAIN, Wiki.POKEPEDIA)) {
+            String content = page.getContent();
+            String name = page.getTitle().substring(0, page.getTitle().indexOf("/"));
+
+            String newContent = content.replace("==Pokémon", "== Pokémon")
+                    .replace("ystère==", "ystère ==");
+
+            if (newContent.equals(content)) continue;
+
+            System.out.println("Modification on " + name);
+            filledPages.add(new PageToPublish(page, newContent, "typo", true));
+        }
+
+        Util.publishMultipleEdits(filledPages);
+    }
+
+    private static void moveSummary() {
+        List<SideGamePage> sleepPages = API.getPokemonSidePagesFromGame(SideGame.SLEEP);
+        ArrayList<SideGamePage> modifiedSleepPages = new ArrayList<>();
+
+        for (SideGamePage sleepPage : sleepPages) {
+            if (sleepPage.getTitle().contains("Salarsen") || sleepPage.getTitle().contains("Pikachu")) continue;
+
+            String oldSection = sleepPage.getSection(SideGame.SLEEP);
+
+            if (!oldSection.contains(".]]\n\n{{#invoke:Sommaire")) continue;
+
+            String summary = ".]]\n\n{{#invoke" + Util.searchValueOf(oldSection, "\n{{#invoke", "\n}}", false) + "\n}}";
+
+            String newSection = oldSection.replace(summary, ".]]");
+
+            if (newSection.equals(oldSection)) continue;
+
+            System.out.println("Modification on " + sleepPage.getTitle());
+            sleepPage.replaceSection(SideGame.SLEEP, newSection);
+            modifiedSleepPages.add(sleepPage);
+        }
+
+        for (SideGamePage sleepPage : modifiedSleepPages) {
+            if (sleepPage.publishEdits("/* Pokémon Sleep */ Duplication du sommaire", true)) {
+                System.out.println(sleepPage.getTitle() + " modified successfully");
+            } else {
+                System.err.println(sleepPage.getTitle() + ": modification failed");
+            }
+        }
     }
 }

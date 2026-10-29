@@ -52,6 +52,8 @@ public enum Competences {
 
     GONFLETTE("Gonflette (Aide de Cuisine S)", "Aide de Cuisine S", "Cuisine"),
 
+    FEU_ENSORCELE("Feu Ensorcelé (Cordon-bleu S", "Cordon-bleu S", "Cordon-bleu"),
+
     BAIES_EN_FOLIE("Baies en folie", "Baies en folie", "Baies en folie"),
     FRAPPE_PSY("Frappe Psy (Baies en folie)", "Baies en folie", "Baies en folie");
 

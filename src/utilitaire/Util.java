@@ -505,6 +505,7 @@ public class Util {
         return "";
     }
 
+    @Deprecated
     public static String extractSection(String content, String sectionName) {
         int level = sectionName.split(" ")[0].length();
         if (!content.contains(sectionName)) throw new ElementNotFoundException(sectionName, "section in the page");

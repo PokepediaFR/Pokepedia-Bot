@@ -5,6 +5,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import utilitaire.article.Page;
+import utilitaire.article.SideGamePage;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -749,6 +750,16 @@ public class API {
             }
         }
         return pagesList;
+    }
+
+    public static List<SideGamePage> getPokemonSidePagesFromGame(SideGame game) {
+        ArrayList<Page> pages = getPageFromCategory("Catégorie:Pokémon apparaissant dans " + game.fullName, NS_MAIN, Wiki.POKEPEDIA);
+
+        ArrayList<SideGamePage> sidePages = new ArrayList<>();
+        for(Page p : pages) {
+            sidePages.add(SideGamePage.fromPage(p));
+        }
+        return sidePages;
     }
 	
 	/**

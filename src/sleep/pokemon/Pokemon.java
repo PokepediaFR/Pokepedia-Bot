@@ -627,18 +627,17 @@ public class Pokemon {
         if (m_imageryType.equals(Imagery.SEXUAL_DIMORPHISM)) result.append(" ♂");
 
         result.append(" Sleep.png|200px|right|thumb|Sprite de ")
-            .append(getRegionalName()).append(" dans {{Jeu|Sleep}}.]]\n").append("""
+            .append(getRegionalName()).append(" dans {{Jeu|Sleep}}.]]\n\n").append("""
+                '''%s''' est présent dans {{Jeu|Sleep}} depuis le %s via l'évènement [[{{?}}]]. Il possède %d styles de dodo et apparaît lors de sessions de recherche du type %s.
+                
+                En tant que Pokémon de soutien, %s arbore le type %s et possède la spécialité « %s ».
+                
                 {{#invoke:Sommaire|table|
                 Ingrédients possibles
                 Évolution
                 Description du Dododex
                 Styles de dodo
                 }}
-                
-                """).append("""
-                '''%s''' est présent dans {{Jeu|Sleep}} depuis le %s via l'évènement [[{{?}}]]. Il possède %d styles de dodo et apparaît lors de sessions de recherche du type %s.
-                
-                En tant que Pokémon de soutien, %s arbore le type %s et possède la spécialité « %s ».
                 """.formatted(getRegionalName(), UtilSleep.getLastMonday(), m_sleepList.size(), m_sleepType.getNom().toLowerCase(),
                     getRegionalName(), type, m_speciality.getNom())).append("\n<div class=\"liste-tableaux\">\n")
             .append("""

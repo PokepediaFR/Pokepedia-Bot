@@ -18,19 +18,38 @@ public class SideGamePage extends Page {
     @Nullable private final Region region;
 
     public SideGamePage(@NotNull Pokemon pokemon) {
-        this.pokemon = pokemon;
-        this.region = null;
-
-        String title = pokemon.getFrenchName() + "/Jeux secondaires";
-        super(title, Wiki.POKEPEDIA);
+        this(pokemon, null);
     }
 
-    public SideGamePage(@NotNull Pokemon pokemon, @NotNull Region region) {
+    public SideGamePage(@NotNull Pokemon pokemon, @Nullable Region region) {
+        super(buildTitle(pokemon, region), Wiki.POKEPEDIA);
         this.pokemon = pokemon;
         this.region = region;
+    }
 
-        String title = pokemon.getFrenchName() + " " + region.getFrAdjective() + "/Jeux secondaires";
-        super(title, Wiki.POKEPEDIA);
+    public static SideGamePage fromPage(@NotNull Page page) {
+        String title = page.getTitle();
+
+        if (!title.contains("/Jeux secondaires")) throw new IllegalArgumentException("%s is not a spinoff page".formatted(title));
+
+        String fullName = title.split("/")[0];
+        Region region = Region.findRegionalFromFr(fullName);
+
+        String pokemonName = region == null ? fullName : fullName.replace(" " + region.getFrAdjective(), "");
+
+        Pokemon pokemon = PokeData.getPokemonFromName(pokemonName);
+
+        return new SideGamePage(pokemon, region);
+    }
+
+    private static String buildTitle(Pokemon pokemon, @Nullable Region region) {
+        String name = pokemon.getFrenchName();
+
+        if (region != null) {
+            name += " " + region.getFrAdjective();
+        }
+
+        return name + "/Jeux secondaires";
     }
 
     public String addSection(SideGame game, String text) {
@@ -59,6 +78,13 @@ public class SideGamePage extends Page {
 
     public String addPMD() {
         return addSection(SideGame.PDM, "{{Article principal|%s/Pokémon Donjon Mystère}}".formatted(getPokemonName()));
+    }
+
+    public String replaceSection(SideGame game, String newText) {
+        String content = getContent();
+        String newContent = content.replace(getSection(game), newText);
+        setContent(newContent);
+        return newContent;
     }
 
     private String createPage(SideGame game, String text) {
@@ -154,6 +180,10 @@ public class SideGamePage extends Page {
 
     public void setContent(String content) {
         this.content = content.replace("\n\n\n", "\n\n");
+    }
+
+    public String getSection(SideGame game) {
+        return getSection("== %s ==".formatted(game.fullName));
     }
 
     public boolean publishEdits(String summary, boolean isMinor) {

@@ -263,7 +263,7 @@ public record Event(String name, Date startDate, int weekDuration, List<Bonus> b
         String newContent;
         int year = getYear();
 
-        String oldSection = Util.searchValueOf(content, "padding: 0\" | " + year, "\n</div>\n", true);
+        String oldSection = Util.searchValueOf(content, "! " + year, "\n</div>\n", true);
         if (oldSection != null) {
             String newSection = oldSection + "\n<div>[[%s]]</div>".formatted(name);
             newContent = content.replace(oldSection, newSection);
@@ -271,11 +271,14 @@ public record Event(String name, Date startDate, int weekDuration, List<Bonus> b
         else {
             int insertPlace = content.indexOf("|}</includeonly>");
             String newSection = """
-                    {| class="tableaustandard enroulable {{#ifeq: {{{1|}}} | %d | | enroulé}}" style="text-align:center; width: 100%%; margin: 5px auto; max-width: none;"
-                    !style="background: #e4f0f7; font-size:90%%; min-width: 75px; padding: 0" | %d
+                    {| class="enroulable {{#ifeq: {{{1|}}} | %d | | enroulé}}" colspan="2"
+                    ! %d
                     |-
-                    | style="font-size:85%%;" | [[%s]]
-                    |}""".formatted(year, year, name);
+                    | style="font-size:85%%" | <div class="liste-éléments">
+                    <div>[[%s]]</div>
+                    </div>
+                    |}
+                    """.formatted(year, year, name);
             newContent = Util.insertIntoString(content, newSection, insertPlace);
         }
 

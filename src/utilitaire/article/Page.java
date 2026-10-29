@@ -14,6 +14,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import utilitaire.API;
+import utilitaire.ElementNotFoundException;
+import utilitaire.Util;
 import utilitaire.Wiki;
 
 import java.io.BufferedReader;
@@ -278,6 +280,24 @@ public class Page {
         }
 
         return content.startsWith("#REDIRECT");
+    }
+
+    public String getSection(String sectionName) {
+        if (content == null) {
+            getContent();
+        }
+
+        int level = sectionName.split(" ")[0].length();
+        if (!content.contains(sectionName)) throw new ElementNotFoundException(sectionName, "section in the page");
+
+        String result = null;
+
+        for (int i = 1; i <= level; i++) {
+            String newResult = Util.searchValueOf(content, sectionName, "\n" + "=".repeat(i) + " ", false).strip();
+            if (result == null || newResult.length() < result.length()) result = newResult;
+        }
+
+        return result;
     }
 
     @Override
